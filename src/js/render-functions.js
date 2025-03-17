@@ -1,28 +1,40 @@
-export function renderImages(images) {
-  const gallery = document.getElementById("gallery");
-  gallery.innerHTML = ""; // Очищуємо галерею перед новим пошуком
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
-  if (images.length === 0) {
-    iziToast.warning({ title: "No Results", message: "Sorry, there are no images matching your search query. Please try again!" });
-    return;
-  }
+const gallery = document.querySelector('.gallery');
 
-  const markup = images
-    .map(
-      ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
-      <div class="image-card">
-        <a href="${largeImageURL}" target="_blank">
-          <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-        </a>
-        <div class="info">
-          <p><strong>Likes:</strong> ${likes}</p>
-          <p><strong>Views:</strong> ${views}</p>
-          <p><strong>Comments:</strong> ${comments}</p>
-          <p><strong>Downloads:</strong> ${downloads}</p>
-        </div>
-      </div>`
-    )
-    .join("");
+export function renderGallery(images) {
+    gallery.innerHTML = '';
 
-  gallery.innerHTML = markup;
+    const markup = images.map(image => `
+        <li class="gallery-item">
+            <a class="gallery-link" href="${image.largeImageURL}">
+                <img src="${image.webformatURL}" alt="${image.tags}" width="360" height="240" />
+            </a>
+            <div class="description">
+                <p class="gallery-item-text">Likes</p>
+                <span>${image.likes}</span>
+            </div>
+            <div class="description">
+                <p class="gallery-item-text">Views</p>
+                <span>${image.views}</span>
+            </div>
+            <div class="description">
+                <p class="gallery-item-text">Comments</p>
+                <span>${image.comments}</span>
+            </div>
+            <div class="description">
+                <p class="gallery-item-text">Downloads</p>
+                <span>${image.downloads}</span>
+            </div>
+        </li>`
+    ).join('');
+
+    gallery.innerHTML = markup;
+
+    const lightbox = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionDelay: 250,
+    });
+    lightbox.refresh();
 }
